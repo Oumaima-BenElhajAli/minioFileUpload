@@ -10,4 +10,5 @@ public interface MediaService {
     UUID save(MultipartFile media);
 
     DefaultMediaService.ChunkWithMetadata fetchChunk(UUID uuid, Range range);
+    void deleteFileById(String id) throws Exception;
 }

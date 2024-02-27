@@ -4,6 +4,7 @@ import com.example.miniofiles.config.MinioConfig;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,13 @@ public class MinioStorageService {
                         .length(length)
                         .object(uuid.toString())
                         .build());
+    }
+    public void deleteMediaFile(String objectName) throws Exception {
+        RemoveObjectArgs args = RemoveObjectArgs.builder()
+                .bucket(MinioConfig.COMMON_BUCKET_NAME)
+                .object(objectName)
+                .build();
+        minioClient.removeObject(args);
     }
 
 }

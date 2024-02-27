@@ -44,6 +44,15 @@ public class MediaController {
                 .header(HttpHeaders.CONTENT_RANGE, constructContentRangeHeader(parsedRange, chunkWithMetadata.metadata().getSize()))
                 .body(chunkWithMetadata.chunk());
     }
+    @DeleteMapping("/{objectName}")
+    public ResponseEntity<String> deleteObject(@PathVariable String objectName) {
+        try {
+            mediaService.deleteFileById(objectName);
+            return ResponseEntity.noContent().build(); // Success response
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error deleting object: " + e.getMessage()); // Error response
+        }
+    }
 
     private String calculateContentLengthHeader(Range range, long fileSize) {
         return String.valueOf(range.getRangeEnd(fileSize) - range.getRangeStart() + 1);

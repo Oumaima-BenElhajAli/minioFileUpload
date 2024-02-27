@@ -1,2 +1,5 @@
 Download Minio from : https://min.io/download#/windows
 Project Documentation : https://medium.com/@pavel.pyshinskiy/minio-postgresql-and-spring-boot-or-how-to-create-video-streaming-service-4e86f98d7355
+run Minio Server:
+        > cd path/to/mino.exe
+        > minio server C:\Data

@@ -41,6 +41,11 @@ public class DefaultMediaService implements MediaService {
             throw new StorageException(ex);
         }
     }
+    @Override
+    public void deleteFileById(String id) throws Exception{
+            storageService.deleteMediaFile(id);
+            fileMetadataRepository.deleteById(id);
+    }
 
     @Override
     public ChunkWithMetadata fetchChunk(UUID uuid, Range range) {
