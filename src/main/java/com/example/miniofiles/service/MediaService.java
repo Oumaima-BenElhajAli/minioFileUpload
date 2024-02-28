@@ -7,8 +7,8 @@ import java.util.UUID;
 
 public interface MediaService {
 
-    UUID save(MultipartFile media);
+    UUID save(MultipartFile media, String path);
 
-    DefaultMediaService.ChunkWithMetadata fetchChunk(UUID uuid, Range range);
-    void deleteFileById(String id) throws Exception;
+    DefaultMediaService.ChunkWithMetadata fetchChunk(UUID uuid, Range range, String path);
+    void deleteFileById(String id, String path) throws Exception;
 }

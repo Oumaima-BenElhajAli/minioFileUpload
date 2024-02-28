@@ -1,5 +1,6 @@
 package com.example.miniofiles.controller;
 
+import com.example.miniofiles.controller.constants.MediaPaths;
 import com.example.miniofiles.service.DefaultMediaService;
 import com.example.miniofiles.util.Range;
 import com.example.miniofiles.service.MediaService;
@@ -26,7 +27,7 @@ public class MediaController {
 
     @PostMapping
     public ResponseEntity<UUID> save(@RequestParam("file") MultipartFile file) {
-        UUID fileUuid = mediaService.save(file);
+        UUID fileUuid = mediaService.save(file, MediaPaths.USERS);
         return ResponseEntity.ok(fileUuid);
     }
 
@@ -36,7 +37,7 @@ public class MediaController {
             @PathVariable UUID uuid
     ) {
         Range parsedRange = Range.parseHttpRangeString(range, defaultChunkSize);
-        DefaultMediaService.ChunkWithMetadata chunkWithMetadata = mediaService.fetchChunk(uuid, parsedRange);
+        DefaultMediaService.ChunkWithMetadata chunkWithMetadata = mediaService.fetchChunk(uuid, parsedRange, MediaPaths.USERS);
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
                 .header(HttpHeaders.CONTENT_TYPE, chunkWithMetadata.metadata().getHttpContentType())
                 .header(HttpHeaders.ACCEPT_RANGES, HttpConstants.ACCEPTS_RANGES_VALUE)
@@ -47,7 +48,7 @@ public class MediaController {
     @DeleteMapping("/{objectName}")
     public ResponseEntity<String> deleteObject(@PathVariable String objectName) {
         try {
-            mediaService.deleteFileById(objectName);
+            mediaService.deleteFileById(objectName, MediaPaths.USERS);
             return ResponseEntity.noContent().build(); // Success response
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error deleting object: " + e.getMessage()); // Error response

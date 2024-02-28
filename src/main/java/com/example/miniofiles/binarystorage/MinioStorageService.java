@@ -24,31 +24,31 @@ public class MinioStorageService {
     @Value("${minio.put-object-part-size}")
     private Long putObjectPartSize;
 
-    public void save(MultipartFile file, UUID uuid) throws Exception {
+    public void save(MultipartFile file, UUID uuid, String path) throws Exception {
         minioClient.putObject(
                 PutObjectArgs
                         .builder()
                         .bucket(MinioConfig.COMMON_BUCKET_NAME)
-                        .object(uuid.toString())
+                        .object(path+uuid.toString())
                         .stream(file.getInputStream(), file.getSize(), putObjectPartSize)
                         .build()
         );
     }
 
-    public InputStream getInputStream(UUID uuid, long offset, long length) throws Exception {
+    public InputStream getInputStream(UUID uuid, long offset, long length , String path) throws Exception {
         return minioClient.getObject(
                 GetObjectArgs
                         .builder()
                         .bucket(MinioConfig.COMMON_BUCKET_NAME)
                         .offset(offset)
                         .length(length)
-                        .object(uuid.toString())
+                        .object(path +uuid.toString())
                         .build());
     }
-    public void deleteMediaFile(String objectName) throws Exception {
+    public void deleteMediaFile(String objectName , String path) throws Exception {
         RemoveObjectArgs args = RemoveObjectArgs.builder()
                 .bucket(MinioConfig.COMMON_BUCKET_NAME)
-                .object(objectName)
+                .object(path+objectName)
                 .build();
         minioClient.removeObject(args);
     }

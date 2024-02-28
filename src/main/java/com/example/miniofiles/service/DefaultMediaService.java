@@ -25,7 +25,7 @@ public class DefaultMediaService implements MediaService {
 
     @Override
     @Transactional
-    public UUID save(MultipartFile media) {
+    public UUID save(MultipartFile media, String path) {
         try {
             UUID fileUuid = UUID.randomUUID();
             FileMetadataEntity metadata = FileMetadataEntity.builder()
@@ -34,7 +34,7 @@ public class DefaultMediaService implements MediaService {
                     .httpContentType(media.getContentType())
                     .build();
             fileMetadataRepository.save(metadata);
-            storageService.save(media, fileUuid);
+            storageService.save(media, fileUuid, path);
             return fileUuid;
         } catch (Exception ex) {
             log.error("Exception occurred when trying to save the file", ex);
@@ -42,22 +42,22 @@ public class DefaultMediaService implements MediaService {
         }
     }
     @Override
-    public void deleteFileById(String id) throws Exception{
-            storageService.deleteMediaFile(id);
+    public void deleteFileById(String id, String path) throws Exception{
+            storageService.deleteMediaFile(id, path);
             fileMetadataRepository.deleteById(id);
     }
 
     @Override
-    public ChunkWithMetadata fetchChunk(UUID uuid, Range range) {
+    public ChunkWithMetadata fetchChunk(UUID uuid, Range range, String path) {
         FileMetadataEntity fileMetadata = fileMetadataRepository.findById(uuid.toString()).orElseThrow();
-        return new ChunkWithMetadata(fileMetadata, readChunk(uuid, range, fileMetadata.getSize()));
+        return new ChunkWithMetadata(fileMetadata, readChunk(uuid, range, fileMetadata.getSize(), path));
     }
 
-    private byte[] readChunk(UUID uuid, Range range, long fileSize) {
+    private byte[] readChunk(UUID uuid, Range range, long fileSize, String path) {
         long startPosition = range.getRangeStart();
         long endPosition = range.getRangeEnd(fileSize);
         int chunkSize = (int) (endPosition - startPosition + 1);
-        try(InputStream inputStream = storageService.getInputStream(uuid, startPosition, chunkSize)) {
+        try(InputStream inputStream = storageService.getInputStream(uuid, startPosition, chunkSize, path)) {
             return inputStream.readAllBytes();
         } catch (Exception exception) {
             log.error("Exception occurred when trying to read file with ID = {}", uuid);
